@@ -20,12 +20,14 @@ const { data } = Astro.props;
     box-sizing: border-box;
     position: relative;
     z-index: 10;
+    justify-content: center;
+    text-align: center;
   }
 
   /* RTL Alignment Logic */
+  .align-center { justify-content: center; }
   .align-start { justify-content: flex-start; } /* Anchors to Right */
   .align-end { justify-content: flex-end; }     /* Anchors to Left */
-  .align-center { justify-content: center; text-align: center; }
 
   /* The Glassmorphism Card */
   .glass-card {
@@ -51,6 +53,7 @@ const { data } = Astro.props;
     margin: 0.5rem 0 1rem 0;
     line-height: 1.1;
     font-weight: 800;
+    text-align: center;
   }
 
   p {
