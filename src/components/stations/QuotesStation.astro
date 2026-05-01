@@ -85,7 +85,7 @@ const quotes = data.quotes || [];
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    gap: 2.5rem; /* ENLARGED: Pushes the arrows further away from the center */
+    gap: 2.5rem;
     min-height: 180px;
   }
 
@@ -106,7 +106,6 @@ const quotes = data.quotes || [];
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
-    
     transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
   }
 
@@ -136,18 +135,15 @@ const quotes = data.quotes || [];
     background: none;
     border: none;
     color: white;
-    font-size: 2.8rem; /* ENLARGED: Made the arrows bigger */
+    font-size: 2.8rem;
     cursor: pointer;
     opacity: 0.6;
     transition: opacity 0.2s, transform 0.2s;
-    padding: 0 15px; /* ENLARGED: Gives the arrows more clickable area and space */
-
-    
+    padding: 0 15px; 
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     z-index: 20;
-    
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
     user-select: none;
@@ -155,22 +151,19 @@ const quotes = data.quotes || [];
   }
 
   .right-btn {
-    right: 3%; /* Anchors the right arrow to the edge of the station */
+    right: 3%; 
   }
 
   .left-btn {
-    left: 3%; /* Anchors the left arrow to the edge of the station */
+    left: 3%; 
   }
 
-  
   @media (hover: hover) {
     .nav-btn:hover {
       opacity: 1;
-      /* Must include translateY(-50%) to keep it centered while scaling */
       transform: translateY(-50%) scale(1.1);
     }
   }
-  
 
   .nav-btn:active {
     opacity: 1;
@@ -203,7 +196,6 @@ const quotes = data.quotes || [];
   /* Mobile Overrides */
   @media (max-width: 768px) {
     .station {
-      
       padding: 0 5%;
       justify-content: center; 
     }
@@ -218,13 +210,15 @@ const quotes = data.quotes || [];
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  function initCarousels() {
     const carousels = document.querySelectorAll('.quotes-container');
     
     carousels.forEach(carousel => {
       const slides = carousel.querySelectorAll('.quote-slide');
       const dots = carousel.querySelectorAll('.dot');
       
+      if (slides.length === 0) return; 
+
       const rightBtn = carousel.querySelector('.right-btn'); 
       const leftBtn = carousel.querySelector('.left-btn');  
       
@@ -232,9 +226,24 @@ const quotes = data.quotes || [];
       let isAnimating = false; 
       const FADE_DURATION = 300; 
 
-      // --- TIMESTAMP COOLDOWN (The fix for the stuck trackpad) ---
+      // --- AUTOPLAY LOGIC ---
+      let autoPlayTimer;
+      const AUTOPLAY_DELAY = 12000; // 12 seconds per slide
+
+      function startAutoPlay() {
+        stopAutoPlay(); 
+        autoPlayTimer = setInterval(() => {
+          showSlide(currentIndex + 1);
+        }, AUTOPLAY_DELAY);
+      }
+
+      function stopAutoPlay() {
+        clearInterval(autoPlayTimer);
+      }
+
+      // --- INTERACTION COOLDOWN ---
       let lastActionTime = 0;
-      const COOLDOWN_MS = 800; // Ignores extra swipes/momentum for 800ms
+      const COOLDOWN_MS = 800; 
 
       function canInteract() {
         const currentTime = new Date().getTime();
@@ -248,6 +257,8 @@ const quotes = data.quotes || [];
       function showSlide(index) {
         if (index === currentIndex) return;
         isAnimating = true;
+
+        startAutoPlay(); // Reset the timer every time a slide changes
 
         let nextIndex = index;
         if (nextIndex < 0) nextIndex = slides.length - 1;
@@ -267,6 +278,12 @@ const quotes = data.quotes || [];
 
         }, FADE_DURATION); 
       }
+
+      // --- EVENT LISTENERS ---
+
+      // Pause Autoplay on Hover
+      carousel.addEventListener('mouseenter', stopAutoPlay);
+      carousel.addEventListener('mouseleave', startAutoPlay);
 
       // Buttons
       leftBtn?.addEventListener('click', () => {
@@ -291,6 +308,7 @@ const quotes = data.quotes || [];
       carousel.addEventListener('touchstart', e => {
         touchStartX = e.touches[0].screenX;
         touchStartY = e.touches[0].screenY;
+        stopAutoPlay(); // Pause while user is actively touching
       }, { passive: true });
 
       carousel.addEventListener('touchmove', e => {
@@ -317,6 +335,7 @@ const quotes = data.quotes || [];
         }
         touchStartX = 0;
         touchStartY = 0;
+        startAutoPlay(); // Resume timer after swipe
       }, { passive: true });
 
       // Trackpad Swipe
@@ -325,17 +344,22 @@ const quotes = data.quotes || [];
           e.preventDefault(); // Blocks Chrome trackpad "go back" swipe
 
           if (Math.abs(e.deltaX) > 20) {
-            // Only allows the slide to change if 800ms have passed since the last one
             if (canInteract()) {
-              if (e.deltaX > 0) {
-                showSlide(currentIndex - 1); 
-              } else {
-                showSlide(currentIndex + 1); 
-              }
+              if (e.deltaX > 0) showSlide(currentIndex - 1); 
+              else showSlide(currentIndex + 1); 
             }
           }
         }
       }, { passive: false }); 
+
+      // Start the autoplay loop when the component mounts
+      startAutoPlay();
     });
-  });
+  }
+
+  // 1. Run immediately for standard Astro page loads
+  initCarousels();
+
+  // 2. Re-run on navigation if using Astro's View Transitions
+  document.addEventListener('astro:page-load', initCarousels);
 </script>
