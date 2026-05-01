@@ -357,9 +357,6 @@ const quotes = data.quotes || [];
     });
   }
 
-  // 1. Run immediately for standard Astro page loads
-  initCarousels();
 
-  // 2. Re-run on navigation if using Astro's View Transitions
   document.addEventListener('astro:page-load', initCarousels);
 </script>
