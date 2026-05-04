@@ -11,8 +11,15 @@ const { data } = Astro.props;
   </div>
 </section>
 
-<script is:inline src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script is:inline id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+  document.addEventListener('astro:page-load', () => {
+    // Check if MathJax is fully loaded, then tell it to re-typeset the new HTML
+    if (window.MathJax && window.MathJax.typesetPromise) {
+      window.MathJax.typesetPromise().catch((err) => console.error('MathJax rendering error:', err));
+    }
+  });
+</script>
 
 <style>
   .station {
