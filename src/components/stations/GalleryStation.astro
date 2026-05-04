@@ -1,30 +1,37 @@
 ---
 const { data } = Astro.props;
-const quotes = data.quotes || [];
+const images = data.images || [];
 ---
 
 <section class={`station align-${data.align || 'center'}`}>
-  <div class="glass-card quotes-container">
+  <div class="glass-card gallery-container">
     {data.title && <h2>{data.title}</h2>}
 
     <div class="carousel-wrapper">
-      <button class="nav-btn right-btn" aria-label="הקודם">&#10094;</button>
+      <button class="nav-btn left-btn" aria-label="הבא">&#10095;</button>
 
-      <div class="quotes-track">
-        {quotes.map((quote, index) => (
-          <div class={`quote-slide ${index === 0 ? 'active' : ''}`} data-index={index}>
-            <p class="quote-text">"{quote.text}"</p>
-            <p class="quote-author">&mdash; {quote.author}</p>
+      <div class="gallery-track">
+        {images.map((image, index) => (
+          <div class={`gallery-slide ${index === 0 ? 'active' : ''}`} data-index={index}>
+            <div class="image-frame">
+              <img 
+                src={image.src} 
+                alt={image.alt || `Gallery image ${index + 1}`} 
+                class="gallery-image" 
+                loading={index === 0 ? "eager" : "lazy"} 
+              />
+            </div>
+            {image.caption && <p class="image-caption">{image.caption}</p>}
           </div>
         ))}
       </div>
 
-      <button class="nav-btn left-btn" aria-label="הבא">&#10095;</button>
+      <button class="nav-btn right-btn" aria-label="הקודם">&#10094;</button>
     </div>
 
     <div class="pagination-dots">
-      {quotes.map((_, index) => (
-        <button class={`dot ${index === 0 ? 'active' : ''}`} aria-label={`Quote ${index + 1}`}></button>
+      {images.map((_, index) => (
+        <button class={`dot ${index === 0 ? 'active' : ''}`} aria-label={`Image ${index + 1}`}></button>
       ))}
     </div>
   </div>
@@ -56,20 +63,12 @@ const quotes = data.quotes || [];
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 16px;
     padding: 3rem;
-    max-width: 600px;
+    max-width: 700px; /* Slightly wider to accommodate landscape photos better */
     width: 100%;
     color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-
-  .station-id {
-    font-size: 0.9rem;
-    letter-spacing: 2px;
-    opacity: 0.7;
-    font-weight: 600;
-    align-self: flex-start;
   }
 
   h2 {
@@ -85,49 +84,65 @@ const quotes = data.quotes || [];
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    gap: 2.5rem;
-    min-height: 180px;
+    gap: 1.5rem;
   }
 
   /* CSS GRID SETUP */
-  .quotes-track {
+  .gallery-track {
     flex-grow: 1;
     display: grid;
     place-items: center;
     touch-action: pan-y; 
     overscroll-behavior-x: none; 
-    padding: 0 4rem;
+    padding: 0 3rem;
+    width: 100%;
   }
 
-  .quote-slide {
+  .gallery-slide {
     grid-area: 1 / 1; 
     width: 100%;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
     transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
   }
 
-  .quote-slide.active {
+  .gallery-slide.active {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
   }
 
-  .quote-text {
-    font-size: 1.2rem;
-    line-height: 1.5;
-    font-weight: 400;
-    margin: 0 0 1rem 0;
+  /* --- THE FIX FOR VARYING DIMENSIONS --- */
+  .image-frame {
+    width: 100%;
+    height: 45vh; /* Locks the height so the layout never jumps */
+    min-height: 250px;
+    max-height: 450px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  .quote-author {
+  .gallery-image {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain; /* Ensures images are never stretched or cropped */
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15)); /* Adds nice depth to PNGs */
+  }
+
+  .image-caption {
     font-size: 1rem;
-    opacity: 0.7;
-    margin: 0;
-    font-weight: 600;
-    text-align: left;
+    opacity: 0.8;
+    margin: 1rem 0 0 0;
+    font-weight: 500;
+    text-align: center;
+    height: 1.5rem; /* Locks caption height so it doesn't cause shift if missing */
   }
 
   /* Navigation Buttons */
@@ -139,24 +154,18 @@ const quotes = data.quotes || [];
     cursor: pointer;
     opacity: 0.6;
     transition: opacity 0.2s, transform 0.2s;
-    padding: 0 15px; 
+    padding: 0 10px; 
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     z-index: 20;
     -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
     user-select: none;
     outline: none;
   }
 
-  .right-btn {
-    right: 3%; 
-  }
-
-  .left-btn {
-    left: 3%; 
-  }
+  .right-btn { right: 2%; }
+  .left-btn { left: 2%; }
 
   @media (hover: hover) {
     .nav-btn:hover {
@@ -174,7 +183,7 @@ const quotes = data.quotes || [];
   .pagination-dots {
     display: flex;
     gap: 8px;
-    margin-top: 2rem;
+    margin-top: 1.5rem;
   }
 
   .dot {
@@ -195,33 +204,25 @@ const quotes = data.quotes || [];
 
   /* Mobile Overrides */
   @media (max-width: 768px) {
-    .station {
-      padding: 0 5%;
-      justify-content: center; 
-    }
-    .glass-card { padding: 2rem; }
-    .quote-text { font-size: 1.2rem; }
-    .nav-btn { font-size: 2rem; padding: 0 10px; }
-    .carousel-wrapper { gap: 1rem; }
-    .quotes-track {
-      padding: 0 2rem; 
-    }
+    .station { padding: 0 5%; justify-content: center; }
+    .glass-card { padding: 2rem 1rem; }
+    .nav-btn { font-size: 2rem; padding: 0 5px; }
+    .gallery-track { padding: 0 1rem; }
+    .image-frame { height: 35vh; }
   }
 </style>
 
 <script>
-  function initCarousels() {
-    const carousels = document.querySelectorAll('.quotes-container');
+  function initImageCarousels() {
+    const carousels = document.querySelectorAll('.gallery-container');
     
     carousels.forEach(carousel => {
-      // --- FIX 1: THE BULLETPROOF LOCK ---
-      // If this carousel is already set up, ignore it and move on.
-      // This prevents View Transitions or HMR from duplicating the logic.
+      // --- THE BULLETPROOF LOCK ---
       if (carousel.dataset.initialized) return;
       carousel.dataset.initialized = 'true';
-      // -----------------------------------
+      // ----------------------------
 
-      const slides = carousel.querySelectorAll('.quote-slide');
+      const slides = carousel.querySelectorAll('.gallery-slide');
       const dots = carousel.querySelectorAll('.dot');
       
       if (slides.length === 0) return; 
@@ -233,9 +234,8 @@ const quotes = data.quotes || [];
       let isAnimating = false; 
       const FADE_DURATION = 300; 
 
-      // Autoplay Logic
       let autoPlayTimer;
-      const AUTOPLAY_DELAY = 5000; 
+      const AUTOPLAY_DELAY = 5000;
 
       function startAutoPlay() {
         stopAutoPlay(); 
@@ -248,7 +248,6 @@ const quotes = data.quotes || [];
         clearInterval(autoPlayTimer);
       }
 
-      // Interaction Cooldown
       let lastActionTime = 0;
       const COOLDOWN_MS = 800; 
 
@@ -265,32 +264,27 @@ const quotes = data.quotes || [];
         if (index === currentIndex) return;
         isAnimating = true;
 
-        startAutoPlay(); // Reset the timer
+        startAutoPlay(); 
 
         let nextIndex = index;
         if (nextIndex < 0) nextIndex = slides.length - 1;
         else if (nextIndex >= slides.length) nextIndex = 0;
 
-        // --- FIX 2: THE CROSS-FADE ---
-        // Instantly remove from the old and add to the new.
-        // CSS will handle the smooth visual transition automatically.
+        // --- INSTANT CROSS-FADE (Fixes scroll-jumping) ---
         slides[currentIndex].classList.remove('active');
-        dots[currentIndex].classList.remove('active');
+        if(dots[currentIndex]) dots[currentIndex].classList.remove('active');
 
         currentIndex = nextIndex;
 
         slides[currentIndex].classList.add('active');
-        dots[currentIndex].classList.add('active');
-        // -----------------------------
+        if(dots[currentIndex]) dots[currentIndex].classList.add('active');
+        // -------------------------------------------------
 
-        // Keep the animation lock so users can't spam clicks 
-        // while the CSS transition is happening.
         setTimeout(() => {
           isAnimating = false;
         }, FADE_DURATION); 
       }
 
-      // Event Listeners
       carousel.addEventListener('mouseenter', stopAutoPlay);
       carousel.addEventListener('mouseleave', startAutoPlay);
 
@@ -308,7 +302,6 @@ const quotes = data.quotes || [];
         });
       });
 
-      // Mobile Swipe
       let touchStartX = 0;
       let touchStartY = 0;
       
@@ -322,45 +315,36 @@ const quotes = data.quotes || [];
         if (!touchStartX || !touchStartY) return;
         const deltaX = touchStartX - e.touches[0].screenX;
         const deltaY = touchStartY - e.touches[0].screenY;
-        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-          e.preventDefault(); 
-        }
+        if (Math.abs(deltaX) > Math.abs(deltaY)) e.preventDefault(); 
       }, { passive: false }); 
 
       carousel.addEventListener('touchend', e => {
         const deltaX = e.changedTouches[0].screenX - touchStartX;
         const deltaY = e.changedTouches[0].screenY - touchStartY;
-
         if (Math.abs(deltaX) > Math.abs(deltaY)) {
-          const swipeThreshold = 50; 
-          if (Math.abs(deltaX) > swipeThreshold && canInteract()) {
+          if (Math.abs(deltaX) > 50 && canInteract()) {
             if (deltaX > 0) showSlide(currentIndex + 1); 
             else showSlide(currentIndex - 1); 
           }
         }
         touchStartX = 0;
         touchStartY = 0;
-        startAutoPlay(); 
+        startAutoPlay();
       }, { passive: true });
 
-      // Trackpad Swipe
       carousel.addEventListener('wheel', e => {
         if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
           e.preventDefault(); 
-          if (Math.abs(e.deltaX) > 20) {
-            if (canInteract()) {
-              if (e.deltaX > 0) showSlide(currentIndex - 1); 
-              else showSlide(currentIndex + 1); 
-            }
+          if (Math.abs(e.deltaX) > 20 && canInteract()) {
+            if (e.deltaX > 0) showSlide(currentIndex - 1); 
+            else showSlide(currentIndex + 1); 
           }
         }
       }, { passive: false }); 
 
-      // Start the autoplay loop
       startAutoPlay();
     });
   }
 
-  // Runs on initial page load AND on Astro View Transition navigation
-  document.addEventListener('astro:page-load', initCarousels);
+  document.addEventListener('astro:page-load', initImageCarousels);
 </script>
