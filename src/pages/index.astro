@@ -2,6 +2,8 @@
 import StationPage from '../layouts/Layout.astro';
 import backgroundImg from '../assets/images/bush.jpg';
 
+const pageDescription = "תוכנית ארזים היא תוכנית שמטרתה להכשיר את מיטב הצעירים בתחומי המתמטיקה והסייבר ולשבצם ביחידות המקצועיות והמסווגות ביותר."
+
 const baseUrl = import.meta.env.BASE_URL;
 const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
 
@@ -49,29 +51,29 @@ const stations = [
     title: 'גלריה',
     images: [
       { 
-        src: cleanBaseUrl + '/gallery/hanging out.png',
+        filename: 'hanging-out.png', // Changed from src to filename
         alt: 'תיאור 1',
       },
       { 
-        src: cleanBaseUrl + '/gallery/playing cards.png',
+        filename: 'playing-cards.png',
         alt: 'תיאור 2'
       },
       { 
-        src: cleanBaseUrl + '/gallery/making food.png',
+        filename: 'making-food.png',
         alt: 'תמונה ארוכה',
       },
       { 
-        src: cleanBaseUrl + '/gallery/officers course.png',
+        filename: 'officers-course.png',
         alt: 'תמונה ארוכה',
         caption: 'קורס קצינים'
       },
       { 
-        src: cleanBaseUrl + '/gallery/hiking.png',
+        filename: 'hiking.png',
         alt: 'תמונה ארוכה',
         caption: 'בטיול'
       },
       { 
-        src: cleanBaseUrl + '/gallery/gathering.png',
+        filename: 'gathering.png',
         alt: 'תמונה ארוכה',
         caption: ''
       }
@@ -87,6 +89,7 @@ const stations = [
 ---
 
 <StationPage 
+  description={pageDescription}
   backgroundImage={backgroundImg}
   stations={stations} 
 />
