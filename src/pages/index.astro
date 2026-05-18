@@ -2,6 +2,8 @@
 import StationPage from '../layouts/Layout.astro';
 import backgroundImg from '../assets/images/bush.jpg';
 
+const pageDescription = "תוכנית ארזים היא תוכנית שמטרתה להכשיר את מיטב הצעירים בתחומי המתמטיקה והסייבר ולשבצם ביחידות המקצועיות והמסווגות ביותר."
+
 const baseUrl = import.meta.env.BASE_URL;
 const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
 
@@ -87,6 +89,7 @@ const stations = [
 ---
 
 <StationPage 
+  description={pageDescription}
   backgroundImage={backgroundImg}
   stations={stations} 
 />

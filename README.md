@@ -7,6 +7,7 @@ Inside the project, you'll see the following folders and files:
 ├── public/
 │   ├── favicon.png
 │   ├── logo.png
+│   ├── gallery
 │   └── axes
 ├── src
 │   ├── assets
@@ -46,6 +47,8 @@ All commands are need to be ran at the root of the project:
 | `npm run dev`             | Starts local dev server at `localhost:4321`      |
 | `npm run build`           | Build your production site to `./dist/`          |
 | `npm run preview`         | Preview your build locally, before deploying     |
+| `npm audit fix`           | Install patched versions of dependecies          |
+
 
 To test mobile devices, append the `-- --host` flag to `dev` and `preview` commands.
 

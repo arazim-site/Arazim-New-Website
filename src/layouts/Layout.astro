@@ -2,33 +2,53 @@
 import Header from '../components/Header.astro';
 
 import Station from '../components/stations/Station.astro';
-import StepStation from '../components/stations/StepStation.astro';
 import HeroStation from '../components/stations/HeroStation.astro';
 import CardsStation from '../components/stations/CardsStation.astro';
 import QuotesStation from '../components/stations/QuotesStation.astro';
 import MathStation from '../components/stations/MathStation.astro';
 import CodeStation from '../components/stations/CodeStation.astro';
-import CodeStation from '../components/stations/CodeStation.astro';
+import StepStation from '../components/stations/StepStation.astro';
 import LinkStation from '../components/stations/LinkStation.astro';
 import GalleryStation from '../components/stations/GalleryStation.astro';
 
+import '@fontsource/assistant/300.css';
+import '@fontsource/assistant/400.css';
+import '@fontsource/assistant/600.css';
+import '@fontsource/assistant/800.css';
 
 import { getImage } from 'astro:assets';
-// 1. IMPORT THE UPDATED CLIENT ROUTER HERE
 import { ClientRouter } from 'astro:transitions';
 
-const { backgroundImage, stations = [], title = 'ארזים' } = Astro.props;
+const { 
+  backgroundImage, 
+  stations = [], 
+  title = 'ארזים',
+  description = 'הופכים את הבלתי אפשרי לקשה מאוד'
+} = Astro.props;
 
 const baseUrl = import.meta.env.BASE_URL;
 const faviconPath = baseUrl.endsWith('/') ? 
   baseUrl + 'favicon.png' : baseUrl + '/favicon.png';
 
-const optimizedBg = await getImage({
+// 1. Generate Desktop Background (1920px)
+const desktopBg = await getImage({
   src: backgroundImage,
   format: 'webp',
   width: 1920,
 });
-const bgStyle = `background-image: url('${optimizedBg.src}')`;
+
+// 2. Generate Mobile Background (800px)
+const mobileBg = await getImage({
+  src: backgroundImage,
+  format: 'webp',
+  width: 800,
+});
+
+// 3. Create a style string mapping both images to CSS variables
+const dynamicBgVars = `
+  --bg-desktop: url('${desktopBg.src}');
+  --bg-mobile: url('${mobileBg.src}');
+`;
 
 const componentMap = {
   standard: Station,
@@ -49,13 +69,16 @@ const componentMap = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title === "ארזים" ? title : `${title} • ארזים`}</title>
 
-    <link rel="icon" type="image/png" href={faviconPath} />
+    <meta name="description" content={description} />[cite: 1]
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href={faviconPath} />
     
-    <link rel="preload" as="image" href={optimizedBg.src} />
+    <!-- Preload mobile image ONLY on small screens -->
+    <link rel="preload" as="image" href={mobileBg.src} media="(max-width: 768px)" />
+    
+    <!-- Preload desktop image ONLY on large screens -->
+    <link rel="preload" as="image" href={desktopBg.src} media="(min-width: 769px)" />
+
     <ClientRouter />
   </head>
   <body>
@@ -66,7 +89,7 @@ const componentMap = {
     </div>
 
     <main class="scroller" id="scroller">
-      <div class="scroll-track" style={bgStyle}>
+      <div class="scroll-track" style={dynamicBgVars}>
         {stations.map((station) => {
           const DynamicStation = componentMap[station.type] || Station;
           return <DynamicStation data={station} />;
@@ -103,12 +126,20 @@ const componentMap = {
       /* The Scrolling Background Track */
       .scroll-track {
         width: 100%;
+        /* 1. Default to Desktop background */
+        background-image: var(--bg-desktop);
         background-size: cover;
         background-position: top center;
         background-repeat: no-repeat;
-        /* Darkens the image elegantly so text pops */
         background-color: rgba(0, 0, 0, 0.4);
         background-blend-mode: multiply; 
+      }
+
+      /* 2. Switch to Mobile background on smaller screens */
+      @media (max-width: 768px) {
+        .scroll-track {
+          background-image: var(--bg-mobile);
+        }
       }
 
       /* Progress Spine UI */
