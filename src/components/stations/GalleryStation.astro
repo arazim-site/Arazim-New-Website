@@ -1,6 +1,11 @@
 ---
+import { Image } from 'astro:assets'; // 1. Import the Image component
+
 const { data } = Astro.props;
-const images = data.images || [];
+const images = data.images || []; // [cite: 34]
+
+// 2. Grab all images from the new assets folder
+const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/assets/gallery/*.{jpeg,jpg,png,gif,webp}');
 ---
 
 <section class={`station align-${data.align || 'center'}`}>
@@ -11,19 +16,32 @@ const images = data.images || [];
       <button class="nav-btn left-btn" aria-label="הבא">&#10095;</button>
 
       <div class="gallery-track">
-        {images.map((image, index) => (
-          <div class={`gallery-slide ${index === 0 ? 'active' : ''}`} data-index={index}>
-            <div class="image-frame">
-              <img 
-                src={image.src} 
-                alt={image.alt || `Gallery image ${index + 1}`} 
-                class="gallery-image" 
-                loading={index === 0 ? "eager" : "lazy"} 
-              />
+        {images.map((image, index) => {
+          // 3. Build the exact path to match the glob object
+          const imagePath = `/src/assets/gallery/${image.filename}`;
+          const imageFactory = allGalleryImages[imagePath];
+
+          // Safety check in case of a typo in index.astro
+          if (!imageFactory) {
+            console.error(`Image not found: ${imagePath}`);
+            return null; 
+          }
+
+          return (
+            <div class={`gallery-slide ${index === 0 ? 'active' : ''}`} data-index={index}>
+              <div class="image-frame">
+                {/* 4. Use the Astro Image component and execute the factory function () */}
+                <Image 
+                  src={imageFactory()} 
+                  alt={image.alt || `Gallery image ${index + 1}`} 
+                  class="gallery-image" 
+                  loading={index === 0 ? "eager" : "lazy"} 
+                />
+              </div>
+              {image.caption && <p class="image-caption">{image.caption}</p>} {/* [cite: 37] */}
             </div>
-            {image.caption && <p class="image-caption">{image.caption}</p>}
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <button class="nav-btn right-btn" aria-label="הקודם">&#10094;</button>

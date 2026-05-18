@@ -1,23 +1,28 @@
 ---
 import { sitePages } from '../config.js';
+import { Image } from 'astro:assets';
+import logoImage from '../assets/logo.png';
 
 const baseUrl = import.meta.env.BASE_URL;
 // Safely remove the trailing slash for building paths
 const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-// Logo path fix
-const logoPath = cleanBaseUrl + '/logo.png';
 
 // Helper function to perfectly format navigation links
 const getNavLink = (path) => {
   if (path === '/') return baseUrl;
-  // If it's the home page, just use the base URL
   return cleanBaseUrl + (path.startsWith('/') ? path : '/' + path);
 };
 ---
 
 <header class="site-header">
   <a href={baseUrl} class="brand">
-    <img src={logoPath} alt="לוגו ארזים" class="site-logo" width="2034" height="2034"/>
+    <Image 
+      src={logoImage} 
+      alt="לוגו ארזים" 
+      class="site-logo" 
+      width={200} 
+      height={200} 
+    />
     <div class="logo-group">
       <h1>ארזים</h1>
       <span class="motto">הופכים את הבלתי אפשרי לקשה מאוד</span>
@@ -43,7 +48,7 @@ const getNavLink = (path) => {
   </div>
 </button>
 
-<div id="mobile-overlay" class="mobile-overlay" aria-hidden="true">
+<div id="mobile-overlay" class="mobile-overlay">
   <nav class="mobile-nav-links">
     {sitePages.map(page => (
       <a href={getNavLink(page.path)} class="mobile-link">{page.title}</a>
@@ -91,7 +96,7 @@ const getNavLink = (path) => {
   
   .motto { 
     font-size: 1rem; 
-    opacity: 0.75; 
+    opacity: 0.75;
   }
 
   .desktop-nav { 
@@ -110,7 +115,7 @@ const getNavLink = (path) => {
   }
   
   .desktop-nav a:hover { 
-    opacity: 0.6; 
+    opacity: 0.6;
   }
 
   /* --- Base Button Styles --- */
@@ -126,7 +131,7 @@ const getNavLink = (path) => {
     padding: 0.5rem;
     align-items: center; 
     gap: 0.6rem; 
-    z-index: 2005; 
+    z-index: 2005;
   }
 
   /* --- Smooth Text Transition Styles --- */
@@ -146,7 +151,7 @@ const getNavLink = (path) => {
 
   .text-open {
     opacity: 1;
-    transform: translateY(-1px); 
+    transform: translateY(-1px);
   }
 
   .text-close {
@@ -207,12 +212,14 @@ const getNavLink = (path) => {
     flex-direction: column;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.4s ease;
+    visibility: hidden; /* ADDED: Removes elements from focus order natively */
+    transition: opacity 0.4s ease, visibility 0.4s ease; /* UPDATED: Animates visibility */
   }
 
   .mobile-overlay.is-open {
     opacity: 1;
     pointer-events: auto;
+    visibility: visible; /* ADDED: Restores focus order when open */
   }
 
   .mobile-nav-links {
@@ -238,14 +245,14 @@ const getNavLink = (path) => {
     }
 
     .desktop-nav { 
-      display: none; 
+      display: none;
     } 
     
     .mobile-menu-btn {
       position: fixed;
       font-size: 1.4rem;
-      top: 2.3rem;   /* Adjust this to move it perfectly level with your logo */
-      left: 1.5rem;  /* Keeps it pinned to the left side */
+      top: 2.3rem; 
+      left: 1.5rem;
       margin: 0;
       padding: 0;
       display: flex;
@@ -273,7 +280,7 @@ const getNavLink = (path) => {
     overlay.classList.remove('is-open');
     toggleBtn.classList.remove('is-open'); 
     toggleBtn.setAttribute('aria-expanded', 'false');
-    overlay.setAttribute('aria-hidden', 'true');
+    // REMOVED manual aria-hidden logic here
   };
 
   document.addEventListener('keydown', (e) => {
@@ -298,7 +305,7 @@ const getNavLink = (path) => {
           overlay.classList.add('is-open');
           toggleBtn.classList.add('is-open'); 
           toggleBtn.setAttribute('aria-expanded', 'true');
-          overlay.setAttribute('aria-hidden', 'false');
+          // REMOVED manual aria-hidden logic here
         }
       });
       

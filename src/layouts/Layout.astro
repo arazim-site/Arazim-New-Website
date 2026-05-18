@@ -73,11 +73,9 @@ const componentMap = {
 
     <link rel="icon" type="image/png" href={faviconPath} />
     
-    <!-- Preload mobile image ONLY on small screens -->
-    <link rel="preload" as="image" href={mobileBg.src} media="(max-width: 768px)" />
-    
-    <!-- Preload desktop image ONLY on large screens -->
-    <link rel="preload" as="image" href={desktopBg.src} media="(min-width: 769px)" />
+    <link rel="preload" as="image" href={mobileBg.src} media="(max-width: 768px)" fetchpriority="high" />
+
+    <link rel="preload" as="image" href={desktopBg.src} media="(min-width: 769px)" fetchpriority="high" />
 
     <ClientRouter />
   </head>
