@@ -3,7 +3,7 @@ const { data } = Astro.props;
 const quotes = data.quotes || [];
 ---
 
-<section class={`station align-${data.align || 'center'}`}>
+<section class={`station align-${data.align || "center"}`}>
   <div class="glass-card quotes-container">
     {data.title && <h2>{data.title}</h2>}
 
@@ -11,27 +11,36 @@ const quotes = data.quotes || [];
       <button class="nav-btn right-btn" aria-label="הקודם">&#10094;</button>
 
       <div class="quotes-track">
-        {quotes.map((quote, index) => (
-          <div class={`quote-slide ${index === 0 ? 'active' : ''}`} data-index={index}>
-            <p class="quote-text">"{quote.text}"</p>
-            <p class="quote-author">&mdash; {quote.author}</p>
-          </div>
-        ))}
+        {
+          quotes.map((quote, index) => (
+            <div
+              class={`quote-slide ${index === 0 ? "active" : ""}`}
+              data-index={index}
+            >
+              <p class="quote-text">"{quote.text}"</p>
+              <p class="quote-author">&mdash; {quote.author}</p>
+            </div>
+          ))
+        }
       </div>
 
       <button class="nav-btn left-btn" aria-label="הבא">&#10095;</button>
     </div>
 
     <div class="pagination-dots">
-      {quotes.map((_, index) => (
-        <button class={`dot ${index === 0 ? 'active' : ''}`} aria-label={`Quote ${index + 1}`}></button>
-      ))}
+      {
+        quotes.map((_, index) => (
+          <button
+            class={`dot ${index === 0 ? "active" : ""}`}
+            aria-label={`Quote ${index + 1}`}
+          />
+        ))
+      }
     </div>
   </div>
 </section>
 
 <style>
-  /* Base Station Styles */
   .station {
     height: 100dvh;
     width: 100%;
@@ -44,11 +53,17 @@ const quotes = data.quotes || [];
     z-index: 10;
   }
 
-  .align-start { justify-content: flex-start; }
-  .align-end { justify-content: flex-end; }
-  .align-center { justify-content: center; text-align: center; }
+  .align-start {
+    justify-content: flex-start;
+  }
+  .align-end {
+    justify-content: flex-end;
+  }
+  .align-center {
+    justify-content: center;
+    text-align: center;
+  }
 
-  /* The Glassmorphism Card */
   .glass-card {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(12px);
@@ -79,7 +94,6 @@ const quotes = data.quotes || [];
     font-weight: 800;
   }
 
-  /* Carousel Layout */
   .carousel-wrapper {
     display: flex;
     align-items: center;
@@ -89,24 +103,26 @@ const quotes = data.quotes || [];
     min-height: 180px;
   }
 
-  /* CSS GRID SETUP */
   .quotes-track {
     flex-grow: 1;
     display: grid;
     place-items: center;
-    touch-action: pan-y; 
-    overscroll-behavior-x: none; 
+    touch-action: pan-y;
+    overscroll-behavior-x: none;
     padding: 0 4rem;
   }
 
   .quote-slide {
-    grid-area: 1 / 1; 
+    grid-area: 1 / 1;
     width: 100%;
     text-align: center;
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
-    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease,
+      visibility 0.3s;
   }
 
   .quote-slide.active {
@@ -130,7 +146,6 @@ const quotes = data.quotes || [];
     text-align: left;
   }
 
-  /* Navigation Buttons */
   .nav-btn {
     background: none;
     border: none;
@@ -138,8 +153,10 @@ const quotes = data.quotes || [];
     font-size: 2.8rem;
     cursor: pointer;
     opacity: 0.6;
-    transition: opacity 0.2s, transform 0.2s;
-    padding: 0 15px; 
+    transition:
+      opacity 0.2s,
+      transform 0.2s;
+    padding: 0 15px;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -155,7 +172,7 @@ const quotes = data.quotes || [];
   }
 
   .left-btn {
-    left: 3%; 
+    left: 3%;
   }
 
   @media (hover: hover) {
@@ -170,7 +187,6 @@ const quotes = data.quotes || [];
     transform: translateY(-50%) scale(0.95);
   }
 
-  /* Pagination Dots */
   .pagination-dots {
     display: flex;
     gap: 8px;
@@ -184,7 +200,9 @@ const quotes = data.quotes || [];
     background-color: rgba(255, 255, 255, 0.3);
     border: none;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
+    transition:
+      background-color 0.3s,
+      transform 0.3s;
     padding: 0;
   }
 
@@ -193,16 +211,24 @@ const quotes = data.quotes || [];
     transform: scale(1.2);
   }
 
-  /* Mobile Overrides */
   @media (max-width: 768px) {
     .station {
       padding: 0 5%;
-      justify-content: center; 
+      justify-content: center;
     }
-    .glass-card { padding: 2rem; }
-    .quote-text { font-size: 1.2rem; }
-    .nav-btn { font-size: 2rem; padding: 0 10px; }
-    .carousel-wrapper { gap: 1rem; }
+    .glass-card {
+      padding: 2rem;
+    }
+    .quote-text {
+      font-size: 1.2rem;
+    }
+    .nav-btn {
+      font-size: 2rem;
+      padding: 0 10px;
+    }
+    .carousel-wrapper {
+      gap: 1rem;
+    }
     .quotes-track {
       padding: 0 2rem;
     }
@@ -211,34 +237,30 @@ const quotes = data.quotes || [];
 
 <script>
   function initCarousels() {
-    const carousels = document.querySelectorAll('.quotes-container');
-    carousels.forEach(carousel => {
-      // --- FIX 1: THE BULLETPROOF LOCK ---
-      // If this carousel is already set up, ignore it and move on.
-      // This prevents View Transitions or HMR from duplicating the logic.
+    const carousels = document.querySelectorAll(".quotes-container");
+    carousels.forEach((carousel) => {
       if (carousel.dataset.initialized) return;
-      carousel.dataset.initialized = 'true';
-      // -----------------------------------
+      carousel.dataset.initialized = "true";
 
-      const slides = carousel.querySelectorAll('.quote-slide');
-      const dots = carousel.querySelectorAll('.dot');
-      
-      if (slides.length === 0) return; 
+      const slides = carousel.querySelectorAll(".quote-slide");
+      const dots = carousel.querySelectorAll(".dot");
 
-      const rightBtn = carousel.querySelector('.right-btn'); 
-      const leftBtn = carousel.querySelector('.left-btn');  
-      
+      if (slides.length === 0) return;
+
+      const rightBtn = carousel.querySelector(".right-btn");
+      const leftBtn = carousel.querySelector(".left-btn");
+
       let currentIndex = 0;
-      let isAnimating = false; 
-      let isHovered = false; // NEW STATE TRACKER
-      const FADE_DURATION = 300; 
+      let isAnimating = false;
+      let isHovered = false;
+      const FADE_DURATION = 300;
 
       // Autoplay Logic
       let autoPlayTimer;
-      const AUTOPLAY_DELAY = 5000; 
+      const AUTOPLAY_DELAY = 5000;
 
       function startAutoPlay() {
-        stopAutoPlay(); 
+        stopAutoPlay();
         autoPlayTimer = setInterval(() => {
           showSlide(currentIndex + 1);
         }, AUTOPLAY_DELAY);
@@ -250,7 +272,7 @@ const quotes = data.quotes || [];
 
       // Interaction Cooldown
       let lastActionTime = 0;
-      const COOLDOWN_MS = 800; 
+      const COOLDOWN_MS = 800;
 
       function canInteract() {
         const currentTime = new Date().getTime();
@@ -265,116 +287,120 @@ const quotes = data.quotes || [];
         if (index === currentIndex) return;
         isAnimating = true;
 
-        // ONLY RESTART IF NOT HOVERING
         if (!isHovered) {
-          startAutoPlay(); 
+          startAutoPlay();
         }
 
         let nextIndex = index;
         if (nextIndex < 0) nextIndex = slides.length - 1;
         else if (nextIndex >= slides.length) nextIndex = 0;
 
-        // --- FIX 2: THE CROSS-FADE ---
-        // Instantly remove from the old and add to the new.
-        // CSS will handle the smooth visual transition automatically.
-        slides[currentIndex].classList.remove('active');
-        dots[currentIndex].classList.remove('active');
+        slides[currentIndex].classList.remove("active");
+        dots[currentIndex].classList.remove("active");
 
         currentIndex = nextIndex;
 
-        slides[currentIndex].classList.add('active');
-        dots[currentIndex].classList.add('active');
-        // -----------------------------
+        slides[currentIndex].classList.add("active");
+        dots[currentIndex].classList.add("active");
 
-        // Keep the animation lock so users can't spam clicks 
-        // while the CSS transition is happening.
         setTimeout(() => {
           isAnimating = false;
         }, FADE_DURATION);
       }
 
-      // Event Listeners (UPDATED TO TRACK HOVER STATE)
-      carousel.addEventListener('mouseenter', () => {
+      carousel.addEventListener("mouseenter", () => {
         isHovered = true;
         stopAutoPlay();
       });
-      
-      carousel.addEventListener('mouseleave', () => {
+
+      carousel.addEventListener("mouseleave", () => {
         isHovered = false;
         startAutoPlay();
       });
 
-      leftBtn?.addEventListener('click', () => {
+      leftBtn?.addEventListener("click", () => {
         if (canInteract()) showSlide(currentIndex + 1);
       });
 
-      rightBtn?.addEventListener('click', () => {
+      rightBtn?.addEventListener("click", () => {
         if (canInteract()) showSlide(currentIndex - 1);
       });
 
       dots.forEach((dot, idx) => {
-        dot.addEventListener('click', () => {
+        dot.addEventListener("click", () => {
           if (canInteract()) showSlide(idx);
         });
       });
 
-      // Mobile Swipe
       let touchStartX = 0;
       let touchStartY = 0;
 
-      carousel.addEventListener('touchstart', e => {
-        touchStartX = e.touches[0].screenX;
-        touchStartY = e.touches[0].screenY;
-        stopAutoPlay(); 
-      }, { passive: true });
+      carousel.addEventListener(
+        "touchstart",
+        (e) => {
+          touchStartX = e.touches[0].screenX;
+          touchStartY = e.touches[0].screenY;
+          stopAutoPlay();
+        },
+        { passive: true },
+      );
 
-      carousel.addEventListener('touchmove', e => {
-        if (!touchStartX || !touchStartY) return;
-        const deltaX = touchStartX - e.touches[0].screenX;
-        const deltaY = touchStartY - e.touches[0].screenY;
-        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-          e.preventDefault(); 
-        }
-      }, { passive: false });
-
-      carousel.addEventListener('touchend', e => {
-        const deltaX = e.changedTouches[0].screenX - touchStartX;
-        const deltaY = e.changedTouches[0].screenY - touchStartY;
-
-        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-          const swipeThreshold = 50; 
-          if (Math.abs(deltaX) > swipeThreshold && canInteract()) {
-            if (deltaX > 0) showSlide(currentIndex + 1); 
-            else showSlide(currentIndex - 1); 
+      carousel.addEventListener(
+        "touchmove",
+        (e) => {
+          if (!touchStartX || !touchStartY) return;
+          const deltaX = touchStartX - e.touches[0].screenX;
+          const deltaY = touchStartY - e.touches[0].screenY;
+          if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            e.preventDefault();
           }
-        }
-        touchStartX = 0;
-        touchStartY = 0;
-        
-        // Ensure autoplay only restarts if not hovering (relevant for hybrid devices)
-        if (!isHovered) {
-          startAutoPlay(); 
-        }
-      }, { passive: true });
+        },
+        { passive: false },
+      );
 
-      // Trackpad Swipe
-      carousel.addEventListener('wheel', e => {
-        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-          e.preventDefault(); 
-          if (Math.abs(e.deltaX) > 20) {
-            if (canInteract()) {
-              if (e.deltaX > 0) showSlide(currentIndex - 1); 
-              else showSlide(currentIndex + 1); 
+      carousel.addEventListener(
+        "touchend",
+        (e) => {
+          const deltaX = e.changedTouches[0].screenX - touchStartX;
+          const deltaY = e.changedTouches[0].screenY - touchStartY;
+
+          if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            const swipeThreshold = 50;
+            if (Math.abs(deltaX) > swipeThreshold && canInteract()) {
+              if (deltaX > 0) showSlide(currentIndex + 1);
+              else showSlide(currentIndex - 1);
             }
           }
-        }
-      }, { passive: false });
+          touchStartX = 0;
+          touchStartY = 0;
 
-      // Start the autoplay loop
+          if (!isHovered) {
+            startAutoPlay();
+          }
+        },
+        { passive: true },
+      );
+
+      carousel.addEventListener(
+        "wheel",
+        (e) => {
+          if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+            e.preventDefault();
+            if (Math.abs(e.deltaX) > 20) {
+              if (canInteract()) {
+                if (e.deltaX > 0) showSlide(currentIndex - 1);
+                else showSlide(currentIndex + 1);
+              }
+            }
+          }
+        },
+        { passive: false },
+      );
+
       startAutoPlay();
     });
   }
 
   // Runs on initial page load AND on Astro View Transition navigation
-  document.addEventListener('astro:page-load', initCarousels);
+  document.addEventListener("astro:page-load", initCarousels);
 </script>

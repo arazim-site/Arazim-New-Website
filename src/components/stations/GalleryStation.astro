@@ -1,14 +1,15 @@
 ---
-import { Image } from 'astro:assets'; // 1. Import the Image component
+import { Image } from "astro:assets";
 
 const { data } = Astro.props;
-const images = data.images || []; // [cite: 34]
+const images = data.images || [];
 
-// 2. Grab all images from the new assets folder
-const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/assets/gallery/*.{jpeg,jpg,png,gif,webp}');
+const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>(
+  "/src/assets/gallery/*.{jpeg,jpg,png,gif,webp}",
+);
 ---
 
-<section class={`station align-${data.align || 'center'}`}>
+<section class={`station align-${data.align || "center"}`}>
   <div class="glass-card gallery-container">
     {data.title && <h2>{data.title}</h2>}
 
@@ -16,47 +17,55 @@ const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/asse
       <button class="nav-btn left-btn" aria-label="הבא">&#10095;</button>
 
       <div class="gallery-track">
-        {images.map((image, index) => {
-          // 3. Build the exact path to match the glob object
-          const imagePath = `/src/assets/gallery/${image.filename}`;
-          const imageFactory = allGalleryImages[imagePath];
+        {
+          images.map((image, index) => {
+            const imagePath = `/src/assets/gallery/${image.filename}`;
+            const imageFactory = allGalleryImages[imagePath];
 
-          // Safety check in case of a typo in index.astro
-          if (!imageFactory) {
-            console.error(`Image not found: ${imagePath}`);
-            return null; 
-          }
+            if (!imageFactory) {
+              console.error(`Image not found: ${imagePath}`);
+              return null;
+            }
 
-          return (
-            <div class={`gallery-slide ${index === 0 ? 'active' : ''}`} data-index={index}>
-              <div class="image-frame">
-                {/* 4. Use the Astro Image component and execute the factory function () */}
-                <Image 
-                  src={imageFactory()} 
-                  alt={image.alt || `Gallery image ${index + 1}`} 
-                  class="gallery-image" 
-                  loading={index === 0 ? "eager" : "lazy"} 
-                />
+            return (
+              <div
+                class={`gallery-slide ${index === 0 ? "active" : ""}`}
+                data-index={index}
+              >
+                <div class="image-frame">
+                  <Image
+                    src={imageFactory()}
+                    alt={image.alt || `Gallery image ${index + 1}`}
+                    class="gallery-image"
+                    loading={index === 0 ? "eager" : "lazy"}
+                  />
+                </div>
+                {image.caption && (
+                  <p class="image-caption">{image.caption}</p>
+                )}{" "}
               </div>
-              {image.caption && <p class="image-caption">{image.caption}</p>} {/* [cite: 37] */}
-            </div>
-          );
-        })}
+            );
+          })
+        }
       </div>
 
       <button class="nav-btn right-btn" aria-label="הקודם">&#10094;</button>
     </div>
 
     <div class="pagination-dots">
-      {images.map((_, index) => (
-        <button class={`dot ${index === 0 ? 'active' : ''}`} aria-label={`Image ${index + 1}`}></button>
-      ))}
+      {
+        images.map((_, index) => (
+          <button
+            class={`dot ${index === 0 ? "active" : ""}`}
+            aria-label={`Image ${index + 1}`}
+          />
+        ))
+      }
     </div>
   </div>
 </section>
 
 <style>
-  /* Base Station Styles */
   .station {
     height: 100dvh;
     width: 100%;
@@ -69,11 +78,17 @@ const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/asse
     z-index: 10;
   }
 
-  .align-start { justify-content: flex-start; }
-  .align-end { justify-content: flex-end; }
-  .align-center { justify-content: center; text-align: center; }
+  .align-start {
+    justify-content: flex-start;
+  }
+  .align-end {
+    justify-content: flex-end;
+  }
+  .align-center {
+    justify-content: center;
+    text-align: center;
+  }
 
-  /* The Glassmorphism Card */
   .glass-card {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(12px);
@@ -81,7 +96,7 @@ const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/asse
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 16px;
     padding: 3rem;
-    max-width: 700px; /* Slightly wider to accommodate landscape photos better */
+    max-width: 700px;
     width: 100%;
     color: white;
     display: flex;
@@ -96,7 +111,6 @@ const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/asse
     font-weight: 800;
   }
 
-  /* Carousel Layout */
   .carousel-wrapper {
     display: flex;
     align-items: center;
@@ -105,19 +119,18 @@ const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/asse
     gap: 1.5rem;
   }
 
-  /* CSS GRID SETUP */
   .gallery-track {
     flex-grow: 1;
     display: grid;
     place-items: center;
-    touch-action: pan-y; 
-    overscroll-behavior-x: none; 
+    touch-action: pan-y;
+    overscroll-behavior-x: none;
     padding: 0 3rem;
     width: 100%;
   }
 
   .gallery-slide {
-    grid-area: 1 / 1; 
+    grid-area: 1 / 1;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -125,7 +138,10 @@ const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/asse
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
-    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease,
+      visibility 0.3s;
   }
 
   .gallery-slide.active {
@@ -134,10 +150,9 @@ const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/asse
     transform: translateY(0);
   }
 
-  /* --- THE FIX FOR VARYING DIMENSIONS --- */
   .image-frame {
     width: 100%;
-    height: 45vh; /* Locks the height so the layout never jumps */
+    height: 45vh;
     min-height: 250px;
     max-height: 450px;
     display: flex;
@@ -151,7 +166,7 @@ const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/asse
     width: auto;
     height: auto;
     object-fit: contain; /* Ensures images are never stretched or cropped */
-    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15)); /* Adds nice depth to PNGs */
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.15));
   }
 
   .image-caption {
@@ -160,10 +175,9 @@ const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/asse
     margin: 1rem 0 0 0;
     font-weight: 500;
     text-align: center;
-    height: 1.5rem; /* Locks caption height so it doesn't cause shift if missing */
+    height: 1.5rem;
   }
 
-  /* Navigation Buttons */
   .nav-btn {
     background: none;
     border: none;
@@ -171,8 +185,10 @@ const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/asse
     font-size: 2.8rem;
     cursor: pointer;
     opacity: 0.6;
-    transition: opacity 0.2s, transform 0.2s;
-    padding: 0 10px; 
+    transition:
+      opacity 0.2s,
+      transform 0.2s;
+    padding: 0 10px;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -182,8 +198,12 @@ const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/asse
     outline: none;
   }
 
-  .right-btn { right: 2%; }
-  .left-btn { left: 2%; }
+  .right-btn {
+    right: 2%;
+  }
+  .left-btn {
+    left: 2%;
+  }
 
   @media (hover: hover) {
     .nav-btn:hover {
@@ -197,7 +217,6 @@ const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/asse
     transform: translateY(-50%) scale(0.95);
   }
 
-  /* Pagination Dots */
   .pagination-dots {
     display: flex;
     gap: 8px;
@@ -211,7 +230,9 @@ const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/asse
     background-color: rgba(255, 255, 255, 0.3);
     border: none;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
+    transition:
+      background-color 0.3s,
+      transform 0.3s;
     padding: 0;
   }
 
@@ -220,43 +241,52 @@ const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/asse
     transform: scale(1.2);
   }
 
-  /* Mobile Overrides */
   @media (max-width: 768px) {
-    .station { padding: 0 5%; justify-content: center; }
-    .glass-card { padding: 2rem 1rem; }
-    .nav-btn { font-size: 2rem; padding: 0 5px; }
-    .gallery-track { padding: 0 1rem; }
-    .image-frame { height: 35vh; }
+    .station {
+      padding: 0 5%;
+      justify-content: center;
+    }
+    .glass-card {
+      padding: 2rem 1rem;
+    }
+    .nav-btn {
+      font-size: 2rem;
+      padding: 0 5px;
+    }
+    .gallery-track {
+      padding: 0 1rem;
+    }
+    .image-frame {
+      height: 35vh;
+    }
   }
 </style>
 
 <script>
   function initImageCarousels() {
-    const carousels = document.querySelectorAll('.gallery-container');
-    
-    carousels.forEach(carousel => {
-      // --- THE BULLETPROOF LOCK ---
+    const carousels = document.querySelectorAll(".gallery-container");
+
+    carousels.forEach((carousel) => {
       if (carousel.dataset.initialized) return;
-      carousel.dataset.initialized = 'true';
-      // ----------------------------
+      carousel.dataset.initialized = "true";
 
-      const slides = carousel.querySelectorAll('.gallery-slide');
-      const dots = carousel.querySelectorAll('.dot');
-      
-      if (slides.length === 0) return; 
+      const slides = carousel.querySelectorAll(".gallery-slide");
+      const dots = carousel.querySelectorAll(".dot");
 
-      const rightBtn = carousel.querySelector('.right-btn'); 
-      const leftBtn = carousel.querySelector('.left-btn');  
-      
+      if (slides.length === 0) return;
+
+      const rightBtn = carousel.querySelector(".right-btn");
+      const leftBtn = carousel.querySelector(".left-btn");
+
       let currentIndex = 0;
-      let isAnimating = false; 
-      const FADE_DURATION = 300; 
+      let isAnimating = false;
+      const FADE_DURATION = 300;
 
       let autoPlayTimer;
       const AUTOPLAY_DELAY = 5000;
 
       function startAutoPlay() {
-        stopAutoPlay(); 
+        stopAutoPlay();
         autoPlayTimer = setInterval(() => {
           showSlide(currentIndex + 1);
         }, AUTOPLAY_DELAY);
@@ -267,7 +297,7 @@ const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/asse
       }
 
       let lastActionTime = 0;
-      const COOLDOWN_MS = 800; 
+      const COOLDOWN_MS = 800;
 
       function canInteract() {
         const currentTime = new Date().getTime();
@@ -282,87 +312,101 @@ const allGalleryImages = import.meta.glob<{ default: ImageMetadata }>('/src/asse
         if (index === currentIndex) return;
         isAnimating = true;
 
-        startAutoPlay(); 
+        startAutoPlay();
 
         let nextIndex = index;
         if (nextIndex < 0) nextIndex = slides.length - 1;
         else if (nextIndex >= slides.length) nextIndex = 0;
 
-        // --- INSTANT CROSS-FADE (Fixes scroll-jumping) ---
-        slides[currentIndex].classList.remove('active');
-        if(dots[currentIndex]) dots[currentIndex].classList.remove('active');
+        slides[currentIndex].classList.remove("active");
+        if (dots[currentIndex]) dots[currentIndex].classList.remove("active");
 
         currentIndex = nextIndex;
 
-        slides[currentIndex].classList.add('active');
-        if(dots[currentIndex]) dots[currentIndex].classList.add('active');
-        // -------------------------------------------------
+        slides[currentIndex].classList.add("active");
+        if (dots[currentIndex]) dots[currentIndex].classList.add("active");
 
         setTimeout(() => {
           isAnimating = false;
-        }, FADE_DURATION); 
+        }, FADE_DURATION);
       }
 
-      carousel.addEventListener('mouseenter', stopAutoPlay);
-      carousel.addEventListener('mouseleave', startAutoPlay);
+      carousel.addEventListener("mouseenter", stopAutoPlay);
+      carousel.addEventListener("mouseleave", startAutoPlay);
 
-      leftBtn?.addEventListener('click', () => {
+      leftBtn?.addEventListener("click", () => {
         if (canInteract()) showSlide(currentIndex + 1);
       });
-      
-      rightBtn?.addEventListener('click', () => {
+
+      rightBtn?.addEventListener("click", () => {
         if (canInteract()) showSlide(currentIndex - 1);
       });
-      
+
       dots.forEach((dot, idx) => {
-        dot.addEventListener('click', () => {
+        dot.addEventListener("click", () => {
           if (canInteract()) showSlide(idx);
         });
       });
 
       let touchStartX = 0;
       let touchStartY = 0;
-      
-      carousel.addEventListener('touchstart', e => {
-        touchStartX = e.touches[0].screenX;
-        touchStartY = e.touches[0].screenY;
-        stopAutoPlay(); 
-      }, { passive: true });
 
-      carousel.addEventListener('touchmove', e => {
-        if (!touchStartX || !touchStartY) return;
-        const deltaX = touchStartX - e.touches[0].screenX;
-        const deltaY = touchStartY - e.touches[0].screenY;
-        if (Math.abs(deltaX) > Math.abs(deltaY)) e.preventDefault(); 
-      }, { passive: false }); 
+      carousel.addEventListener(
+        "touchstart",
+        (e) => {
+          touchStartX = e.touches[0].screenX;
+          touchStartY = e.touches[0].screenY;
+          stopAutoPlay();
+        },
+        { passive: true },
+      );
 
-      carousel.addEventListener('touchend', e => {
-        const deltaX = e.changedTouches[0].screenX - touchStartX;
-        const deltaY = e.changedTouches[0].screenY - touchStartY;
-        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-          if (Math.abs(deltaX) > 50 && canInteract()) {
-            if (deltaX > 0) showSlide(currentIndex + 1); 
-            else showSlide(currentIndex - 1); 
+      carousel.addEventListener(
+        "touchmove",
+        (e) => {
+          if (!touchStartX || !touchStartY) return;
+          const deltaX = touchStartX - e.touches[0].screenX;
+          const deltaY = touchStartY - e.touches[0].screenY;
+          if (Math.abs(deltaX) > Math.abs(deltaY)) e.preventDefault();
+        },
+        { passive: false },
+      );
+
+      carousel.addEventListener(
+        "touchend",
+        (e) => {
+          const deltaX = e.changedTouches[0].screenX - touchStartX;
+          const deltaY = e.changedTouches[0].screenY - touchStartY;
+          if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            if (Math.abs(deltaX) > 50 && canInteract()) {
+              if (deltaX > 0) showSlide(currentIndex + 1);
+              else showSlide(currentIndex - 1);
+            }
           }
-        }
-        touchStartX = 0;
-        touchStartY = 0;
-        startAutoPlay();
-      }, { passive: true });
+          touchStartX = 0;
+          touchStartY = 0;
+          startAutoPlay();
+        },
+        { passive: true },
+      );
 
-      carousel.addEventListener('wheel', e => {
-        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-          e.preventDefault(); 
-          if (Math.abs(e.deltaX) > 20 && canInteract()) {
-            if (e.deltaX > 0) showSlide(currentIndex - 1); 
-            else showSlide(currentIndex + 1); 
+      carousel.addEventListener(
+        "wheel",
+        (e) => {
+          if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+            e.preventDefault();
+            if (Math.abs(e.deltaX) > 20 && canInteract()) {
+              if (e.deltaX > 0) showSlide(currentIndex - 1);
+              else showSlide(currentIndex + 1);
+            }
           }
-        }
-      }, { passive: false }); 
+        },
+        { passive: false },
+      );
 
       startAutoPlay();
     });
   }
 
-  document.addEventListener('astro:page-load', initImageCarousels);
+  document.addEventListener("astro:page-load", initImageCarousels);
 </script>

@@ -1,27 +1,25 @@
 ---
-import { sitePages } from '../config.js';
-import { Image } from 'astro:assets';
-import logoImage from '../assets/logo.png';
+import { sitePages } from "../config.js";
+import { Image } from "astro:assets";
+import logoImage from "../assets/logo.png";
 
 const baseUrl = import.meta.env.BASE_URL;
-// Safely remove the trailing slash for building paths
-const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+const cleanBaseUrl = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
 
-// Helper function to perfectly format navigation links
 const getNavLink = (path) => {
-  if (path === '/') return baseUrl;
-  return cleanBaseUrl + (path.startsWith('/') ? path : '/' + path);
+  if (path === "/") return baseUrl;
+  return cleanBaseUrl + (path.startsWith("/") ? path : "/" + path);
 };
 ---
 
 <header class="site-header">
   <a href={baseUrl} class="brand">
-    <Image 
-      src={logoImage} 
-      alt="לוגו ארזים" 
-      class="site-logo" 
-      width={200} 
-      height={200} 
+    <Image
+      src={logoImage}
+      alt="לוגו ארזים"
+      class="site-logo"
+      width={200}
+      height={200}
     />
     <div class="logo-group">
       <h1>ארזים</h1>
@@ -30,13 +28,16 @@ const getNavLink = (path) => {
   </a>
 
   <nav class="desktop-nav">
-    {sitePages.map(page => (
-      <a href={getNavLink(page.path)}>{page.title}</a>
-    ))}
+    {sitePages.map((page) => <a href={getNavLink(page.path)}>{page.title}</a>)}
   </nav>
 </header>
 
-<button id="menu-toggle" class="mobile-menu-btn" aria-expanded="false" aria-controls="mobile-overlay">
+<button
+  id="menu-toggle"
+  class="mobile-menu-btn"
+  aria-expanded="false"
+  aria-controls="mobile-overlay"
+>
   <div class="menu-text-wrapper">
     <span class="text-open">תפריט</span>
     <span class="text-close">סגור</span>
@@ -50,14 +51,17 @@ const getNavLink = (path) => {
 
 <div id="mobile-overlay" class="mobile-overlay">
   <nav class="mobile-nav-links">
-    {sitePages.map(page => (
-      <a href={getNavLink(page.path)} class="mobile-link">{page.title}</a>
-    ))}
+    {
+      sitePages.map((page) => (
+        <a href={getNavLink(page.path)} class="mobile-link">
+          {page.title}
+        </a>
+      ))
+    }
   </nav>
 </div>
 
 <style>
-  /* --- Desktop Header Styles --- */
   .site-header {
     position: fixed;
     top: 0;
@@ -70,7 +74,11 @@ const getNavLink = (path) => {
     box-sizing: border-box;
     z-index: 1000;
     color: white;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.8) 0%,
+      rgba(0, 0, 0, 0) 100%
+    );
   }
 
   .brand {
@@ -87,25 +95,25 @@ const getNavLink = (path) => {
     object-fit: contain;
   }
 
-  .logo-group h1 { 
-    margin: 0; 
-    font-size: 2.2rem; 
-    font-weight: 800; 
+  .logo-group h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    font-weight: 800;
     margin-top: -20px;
   }
-  
-  .motto { 
-    font-size: 1rem; 
+
+  .motto {
+    font-size: 1rem;
     opacity: 0.75;
   }
 
-  .desktop-nav { 
-    display: flex; 
+  .desktop-nav {
+    display: flex;
     gap: 2.3rem;
     align-items: center;
     margin-top: -48px;
   }
-  
+
   .desktop-nav a {
     color: white;
     text-decoration: none;
@@ -113,12 +121,11 @@ const getNavLink = (path) => {
     font-size: 1.2rem;
     transition: opacity 0.3s;
   }
-  
-  .desktop-nav a:hover { 
+
+  .desktop-nav a:hover {
     opacity: 0.6;
   }
 
-  /* --- Base Button Styles --- */
   .mobile-menu-btn {
     display: none;
     background: transparent;
@@ -129,12 +136,11 @@ const getNavLink = (path) => {
     cursor: pointer;
     font-family: inherit;
     padding: 0.5rem;
-    align-items: center; 
-    gap: 0.6rem; 
+    align-items: center;
+    gap: 0.6rem;
     z-index: 2005;
   }
 
-  /* --- Smooth Text Transition Styles --- */
   .menu-text-wrapper {
     position: relative;
     width: 48px;
@@ -144,9 +150,12 @@ const getNavLink = (path) => {
     justify-content: center;
   }
 
-  .text-open, .text-close {
+  .text-open,
+  .text-close {
     position: absolute;
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    transition:
+      opacity 0.4s ease,
+      transform 0.4s ease;
   }
 
   .text-open {
@@ -169,7 +178,6 @@ const getNavLink = (path) => {
     transform: translateY(-2px);
   }
 
-  /* --- Hamburger Stripes & Animation --- */
   .hamburger {
     display: flex;
     flex-direction: column;
@@ -183,7 +191,9 @@ const getNavLink = (path) => {
     width: 100%;
     height: 2px;
     background-color: white;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      opacity 0.3s ease;
     transform-origin: center;
   }
 
@@ -197,7 +207,6 @@ const getNavLink = (path) => {
     transform: translateY(-8px) rotate(-45deg);
   }
 
-  /* --- Mobile Overlay Styles --- */
   .mobile-overlay {
     position: fixed;
     top: 0;
@@ -212,14 +221,16 @@ const getNavLink = (path) => {
     flex-direction: column;
     opacity: 0;
     pointer-events: none;
-    visibility: hidden; /* ADDED: Removes elements from focus order natively */
-    transition: opacity 0.4s ease, visibility 0.4s ease; /* UPDATED: Animates visibility */
+    visibility: hidden;
+    transition:
+      opacity 0.4s ease,
+      visibility 0.4s ease;
   }
 
   .mobile-overlay.is-open {
     opacity: 1;
     pointer-events: auto;
-    visibility: visible; /* ADDED: Restores focus order when open */
+    visibility: visible;
   }
 
   .mobile-nav-links {
@@ -238,79 +249,79 @@ const getNavLink = (path) => {
     font-weight: 800;
   }
 
-  /* --- Mobile Layout Rules --- */
-  @media (max-width: 1024px) { 
-    .site-header { 
+  @media (max-width: 1024px) {
+    .site-header {
       padding: 0.6rem 0.6rem 1rem 1rem;
     }
 
-    .desktop-nav { 
+    .desktop-nav {
       display: none;
-    } 
-    
+    }
+
     .mobile-menu-btn {
       position: fixed;
       font-size: 1.4rem;
-      top: 2.3rem; 
+      top: 2.3rem;
       left: 1.5rem;
       margin: 0;
       padding: 0;
       display: flex;
     }
 
-    .site-logo { 
+    .site-logo {
       height: 75px;
     }
-    
-    .logo-group h1 { 
+
+    .logo-group h1 {
       font-size: 2.4rem;
-      margin-top: -10px; 
-      margin-right: -7px; 
+      margin-top: -10px;
+      margin-right: -7px;
     }
-    
-    .motto { 
+
+    .motto {
       display: none;
     }
   }
 </style>
 
 <script>
-  // Helper function to close the menu
   const closeMenu = (overlay, toggleBtn) => {
-    overlay.classList.remove('is-open');
-    toggleBtn.classList.remove('is-open'); 
-    toggleBtn.setAttribute('aria-expanded', 'false');
-    // REMOVED manual aria-hidden logic here
+    overlay.classList.remove("is-open");
+    toggleBtn.classList.remove("is-open");
+    toggleBtn.setAttribute("aria-expanded", "false");
   };
 
-  document.addEventListener('keydown', (e) => {
-    const overlay = document.getElementById('mobile-overlay');
-    const toggleBtn = document.getElementById('menu-toggle');
-    
-    if (e.key === 'Escape' && overlay && overlay.classList.contains('is-open')) {
+  document.addEventListener("keydown", (e) => {
+    const overlay = document.getElementById("mobile-overlay");
+    const toggleBtn = document.getElementById("menu-toggle");
+
+    if (
+      e.key === "Escape" &&
+      overlay &&
+      overlay.classList.contains("is-open")
+    ) {
       closeMenu(overlay, toggleBtn);
     }
   });
 
-  document.addEventListener('astro:page-load', () => {
-    const toggleBtn = document.getElementById('menu-toggle');
-    const overlay = document.getElementById('mobile-overlay');
-    const mobileLinks = document.querySelectorAll('.mobile-link');
+  document.addEventListener("astro:page-load", () => {
+    const toggleBtn = document.getElementById("menu-toggle");
+    const overlay = document.getElementById("mobile-overlay");
+    const mobileLinks = document.querySelectorAll(".mobile-link");
 
     if (toggleBtn && overlay) {
-      toggleBtn.addEventListener('click', () => {
-        if (overlay.classList.contains('is-open')) {
+      toggleBtn.addEventListener("click", () => {
+        if (overlay.classList.contains("is-open")) {
           closeMenu(overlay, toggleBtn);
         } else {
-          overlay.classList.add('is-open');
-          toggleBtn.classList.add('is-open'); 
-          toggleBtn.setAttribute('aria-expanded', 'true');
-          // REMOVED manual aria-hidden logic here
+          overlay.classList.add("is-open");
+          toggleBtn.classList.add("is-open");
+          toggleBtn.setAttribute("aria-expanded", "true");
         }
       });
-      
-      mobileLinks.forEach(link => {
-        link.addEventListener('click', () => closeMenu(overlay, toggleBtn));
+
+      mobileLinks.forEach((link) => {
+        link.addEventListener("click", () => closeMenu(overlay, toggleBtn));
       });
     }
   });

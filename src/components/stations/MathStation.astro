@@ -5,18 +5,23 @@ const { data } = Astro.props;
 <section class={`station align-${data.align}`}>
   <div class="glass-card">
     <h2>{data.title}</h2>
-    
-    {/* set:html renders the string as actual HTML, allowing <p> tags and math blocks */}
-    <div class="rich-text-container" set:html={data.text}></div>
+
+    <div class="rich-text-container" set:html={data.text} />
   </div>
 </section>
 
-<script is:inline id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script
+  is:inline
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <script>
-  document.addEventListener('astro:page-load', () => {
+  document.addEventListener("astro:page-load", () => {
     // Check if MathJax is fully loaded, then tell it to re-typeset the new HTML
     if (window.MathJax && window.MathJax.typesetPromise) {
-      window.MathJax.typesetPromise().catch((err) => console.error('MathJax rendering error:', err));
+      window.MathJax.typesetPromise().catch((err) =>
+        console.error("MathJax rendering error:", err),
+      );
     }
   });
 </script>
@@ -34,9 +39,16 @@ const { data } = Astro.props;
     z-index: 10;
   }
 
-  .align-start { justify-content: flex-start; } 
-  .align-end { justify-content: flex-end; }     
-  .align-center { justify-content: center; text-align: center; }
+  .align-start {
+    justify-content: flex-start;
+  }
+  .align-end {
+    justify-content: flex-end;
+  }
+  .align-center {
+    justify-content: center;
+    text-align: center;
+  }
 
   .glass-card {
     background: rgba(255, 255, 255, 0.1);
@@ -45,7 +57,7 @@ const { data } = Astro.props;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 16px;
     padding: 3rem;
-    max-width: 600px; 
+    max-width: 600px;
     color: white;
   }
 
@@ -63,9 +75,8 @@ const { data } = Astro.props;
     font-weight: 800;
   }
 
-  /* --- INJECTED HTML STYLES --- */
   /* We must use :global() because this HTML is injected at runtime via set:html */
-  
+
   .rich-text-container :global(p) {
     font-size: 1.2rem;
     line-height: 1.6;
@@ -74,7 +85,7 @@ const { data } = Astro.props;
   }
 
   .rich-text-container :global(.math-block) {
-    direction: ltr; /* CRITICAL: Forces standalone math blocks to render LTR */
+    direction: ltr;
     background: rgba(0, 0, 0, 0.25);
     padding: 1.5rem;
     border-radius: 8px;
@@ -88,13 +99,15 @@ const { data } = Astro.props;
   @media (max-width: 768px) {
     .station {
       padding: 0 5%;
-      justify-content: center; 
+      justify-content: center;
     }
     .glass-card {
       padding: 2rem;
-      text-align: right; 
+      text-align: right;
     }
-    h2 { font-size: 2.5rem; }
+    h2 {
+      font-size: 2.5rem;
+    }
     .rich-text-container :global(.math-block) {
       font-size: 1.1rem;
       padding: 1rem;

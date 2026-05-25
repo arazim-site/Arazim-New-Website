@@ -1,45 +1,47 @@
 ---
-import Header from '../components/Header.astro';
+import Header from "../components/Header.astro";
 
-import Station from '../components/stations/Station.astro';
-import HeroStation from '../components/stations/HeroStation.astro';
-import CardsStation from '../components/stations/CardsStation.astro';
-import QuotesStation from '../components/stations/QuotesStation.astro';
-import MathStation from '../components/stations/MathStation.astro';
-import CodeStation from '../components/stations/CodeStation.astro';
-import StepStation from '../components/stations/StepStation.astro';
-import LinkStation from '../components/stations/LinkStation.astro';
-import GalleryStation from '../components/stations/GalleryStation.astro';
+import Station from "../components/stations/Station.astro";
+import HeroStation from "../components/stations/HeroStation.astro";
+import CardsStation from "../components/stations/CardsStation.astro";
+import QuotesStation from "../components/stations/QuotesStation.astro";
+import MathStation from "../components/stations/MathStation.astro";
+import CodeStation from "../components/stations/CodeStation.astro";
+import StepStation from "../components/stations/StepStation.astro";
+import LinkStation from "../components/stations/LinkStation.astro";
+import GalleryStation from "../components/stations/GalleryStation.astro";
 
-import '@fontsource/assistant/300.css';
-import '@fontsource/assistant/400.css';
-import '@fontsource/assistant/600.css';
-import '@fontsource/assistant/800.css';
+import "@fontsource/assistant/300.css";
+import "@fontsource/assistant/400.css";
+import "@fontsource/assistant/600.css";
+import "@fontsource/assistant/800.css";
 
-import { getImage } from 'astro:assets';
-import { ClientRouter } from 'astro:transitions';
+import { getImage } from "astro:assets";
+import { ClientRouter } from "astro:transitions";
 
-const { 
-  backgroundImage, 
-  stations = [], 
-  title = 'ארזים',
-  description = 'הופכים את הבלתי אפשרי לקשה מאוד'
+const {
+  backgroundImage,
+  stations = [],
+  title = "ארזים",
+  description = "הופכים את הבלתי אפשרי לקשה מאוד",
 } = Astro.props;
 
 const baseUrl = import.meta.env.BASE_URL;
-const faviconPath = (baseUrl.endsWith('/') ? baseUrl + 'favicon.png' : baseUrl + '/favicon.png') + '?v=1';
+const faviconPath =
+  (baseUrl.endsWith("/") ? baseUrl + "favicon.png" : baseUrl + "/favicon.png") +
+  "?v=1";
 
 // 1. Generate Desktop Background (1920px)
 const desktopBg = await getImage({
   src: backgroundImage,
-  format: 'webp',
+  format: "webp",
   width: 1920,
 });
 
 // 2. Generate Mobile Background (800px)
 const mobileBg = await getImage({
   src: backgroundImage,
-  format: 'webp',
+  format: "webp",
   width: 800,
 });
 
@@ -71,10 +73,22 @@ const componentMap = {
     <meta name="description" content={description} />
 
     <link rel="icon" type="image/png" href={faviconPath} />
-    
-    <link rel="preload" as="image" href={mobileBg.src} media="(max-width: 768px)" fetchpriority="high" />
 
-    <link rel="preload" as="image" href={desktopBg.src} media="(min-width: 769px)" fetchpriority="high" />
+    <link
+      rel="preload"
+      as="image"
+      href={mobileBg.src}
+      media="(max-width: 768px)"
+      fetchpriority="high"
+    />
+
+    <link
+      rel="preload"
+      as="image"
+      href={desktopBg.src}
+      media="(min-width: 769px)"
+      fetchpriority="high"
+    />
 
     <ClientRouter />
   </head>
@@ -87,10 +101,12 @@ const componentMap = {
 
     <main class="scroller" id="scroller">
       <div class="scroll-track" style={dynamicBgVars}>
-        {stations.map((station) => {
-          const DynamicStation = componentMap[station.type] || Station;
-          return <DynamicStation data={station} />;
-        })}
+        {
+          stations.map((station) => {
+            const DynamicStation = componentMap[station.type] || Station;
+            return <DynamicStation data={station} />;
+          })
+        }
       </div>
     </main>
 
@@ -100,50 +116,47 @@ const componentMap = {
         padding: 0;
         overflow: hidden;
         background-color: #000;
-        font-family: 'Assistant', system-ui, -apple-system, sans-serif;
+        font-family:
+          "Assistant",
+          system-ui,
+          -apple-system,
+          sans-serif;
       }
 
-      /* The Scroll Snap Container */
       .scroller {
         height: 100dvh;
         overflow-y: scroll;
         scroll-snap-type: y mandatory;
         position: relative;
         scroll-behavior: smooth;
-        
-        /* HIDE THE NATIVE SCROLLBAR */
+
         -ms-overflow-style: none;
         scrollbar-width: none;
       }
 
-      /* Hide scrollbar for Chrome, Safari and Opera */
       .scroller::-webkit-scrollbar {
         display: none;
       }
 
-      /* The Scrolling Background Track */
       .scroll-track {
         width: 100%;
-        /* 1. Default to Desktop background */
         background-image: var(--bg-desktop);
         background-size: cover;
         background-position: top center;
         background-repeat: no-repeat;
         background-color: rgba(0, 0, 0, 0.4);
-        background-blend-mode: multiply; 
+        background-blend-mode: multiply;
       }
 
-      /* 2. Switch to Mobile background on smaller screens */
       @media (max-width: 768px) {
         .scroll-track {
           background-image: var(--bg-mobile);
         }
       }
 
-      /* Progress Spine UI */
       .progress-container {
         position: fixed;
-        right: 40px; /* Right side for Hebrew */
+        right: 40px;
         top: 50%;
         transform: translateY(-50%);
         width: 6px;
@@ -151,46 +164,40 @@ const componentMap = {
         background: rgba(255, 255, 255, 0.2);
         z-index: 100;
         border-radius: 10px;
-        /* Rounds the outer track */
         overflow: hidden;
-        /* Keeps the inner bar clipped cleanly */
       }
 
       .progress-bar {
         width: 100%;
-        height: 0%; /* Start at 0 */
+        height: 0%;
         background: #fff;
         border-radius: 10px;
-        /* Stays perfectly round at the bottom */
-        /* Note: No transition here, the JS handles the smoothness! */
       }
 
       @media (max-width: 1024px) {
         .progress-container {
-          right: 8px; /* Pushed further to the right edge (previously 15px) */
-          width: 4px; /* Overrides the desktop 5px width to make it slimmer */
+          right: 8px;
+          width: 4px;
         }
-        
-        /* Add this to reduce text size on mobile */
+
         :global(body, html) {
-          font-size: 14px; /* Adjust this value to your preferred mobile size */
+          font-size: 14px;
         }
       }
     </style>
 
     <script>
-      document.addEventListener('astro:page-load', () => {
-        const scroller = document.getElementById('scroller');
-        const progressBar = document.getElementById('myBar');
+      document.addEventListener("astro:page-load", () => {
+        const scroller = document.getElementById("scroller");
+        const progressBar = document.getElementById("myBar");
 
         if (scroller && progressBar) {
-          // FIX 1: Reset scroll position to top on every page load
           scroller.scrollTop = 0;
-          progressBar.style.height = '0%';
+          progressBar.style.height = "0%";
 
-          scroller.addEventListener('scroll', () => {
+          scroller.addEventListener("scroll", () => {
             const scrollHeight = scroller.scrollHeight - scroller.clientHeight;
-            
+
             if (scrollHeight > 0) {
               const scrolled = (scroller.scrollTop / scrollHeight) * 100;
               progressBar.style.height = `${scrolled}%`;

@@ -6,15 +6,18 @@ const { data } = Astro.props;
   <div class="glass-card">
     <h2>{data.title}</h2>
     <p>{data.text}</p>
-    
-    {/* Check if the links array exists and has items, then loop through it */}
-    {data.links && data.links.length > 0 && (
-      <div class="link-container">
-        {data.links.map((link) => (
-          <a href={link.url} class="station-link">{link.text}</a>
-        ))}
-      </div>
-    )}
+
+    {
+      data.links && data.links.length > 0 && (
+        <div class="link-container">
+          {data.links.map((link) => (
+            <a href={link.url} class="station-link">
+              {link.text}
+            </a>
+          ))}
+        </div>
+      )
+    }
   </div>
 </section>
 
@@ -31,12 +34,17 @@ const { data } = Astro.props;
     z-index: 10;
   }
 
-  /* RTL Alignment Logic */
-  .align-start { justify-content: flex-start; } /* Anchors to Right */
-  .align-end { justify-content: flex-end; }     /* Anchors to Left */
-  .align-center { justify-content: center; text-align: center; }
+  .align-start {
+    justify-content: flex-start;
+  }
+  .align-end {
+    justify-content: flex-end;
+  }
+  .align-center {
+    justify-content: center;
+    text-align: center;
+  }
 
-  /* The Glassmorphism Card */
   .glass-card {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(12px);
@@ -66,19 +74,17 @@ const { data } = Astro.props;
     font-size: 1.2rem;
     line-height: 1.6;
     opacity: 0.9;
-    margin-bottom: 1.5rem; 
+    margin-bottom: 1.5rem;
   }
 
-  /* Container to manage multiple buttons */
   .link-container {
     display: flex;
     gap: 1rem;
-    flex-wrap: wrap; 
-    justify-content: center; /* Centers the buttons inside the card */
-    margin-top: 1.5rem; /* Optional: adds a little space above the buttons */
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1.5rem;
   }
 
-  /* Glassmorphism Link Styles */
   .station-link {
     display: inline-block;
     padding: 0.75rem 1.5rem;
@@ -98,11 +104,10 @@ const { data } = Astro.props;
     transform: translateY(-2px);
   }
 
-  /* Mobile Overrides */
   @media (max-width: 768px) {
     .station {
       padding: 0 5%;
-      justify-content: center; 
+      justify-content: center;
     }
 
     .glass-card {
@@ -110,6 +115,8 @@ const { data } = Astro.props;
       text-align: right;
     }
 
-    h2 { font-size: 2.5rem; }
+    h2 {
+      font-size: 2.5rem;
+    }
   }
 </style>
