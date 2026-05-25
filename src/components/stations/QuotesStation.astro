@@ -151,7 +151,7 @@ const quotes = data.quotes || [];
   }
 
   .right-btn {
-    right: 3%; 
+    right: 3%;
   }
 
   .left-btn {
@@ -204,7 +204,7 @@ const quotes = data.quotes || [];
     .nav-btn { font-size: 2rem; padding: 0 10px; }
     .carousel-wrapper { gap: 1rem; }
     .quotes-track {
-      padding: 0 2rem; 
+      padding: 0 2rem;
     }
   }
 </style>
@@ -212,7 +212,6 @@ const quotes = data.quotes || [];
 <script>
   function initCarousels() {
     const carousels = document.querySelectorAll('.quotes-container');
-    
     carousels.forEach(carousel => {
       // --- FIX 1: THE BULLETPROOF LOCK ---
       // If this carousel is already set up, ignore it and move on.
@@ -231,6 +230,7 @@ const quotes = data.quotes || [];
       
       let currentIndex = 0;
       let isAnimating = false; 
+      let isHovered = false; // NEW STATE TRACKER
       const FADE_DURATION = 300; 
 
       // Autoplay Logic
@@ -265,7 +265,10 @@ const quotes = data.quotes || [];
         if (index === currentIndex) return;
         isAnimating = true;
 
-        startAutoPlay(); // Reset the timer
+        // ONLY RESTART IF NOT HOVERING
+        if (!isHovered) {
+          startAutoPlay(); 
+        }
 
         let nextIndex = index;
         if (nextIndex < 0) nextIndex = slides.length - 1;
@@ -287,21 +290,28 @@ const quotes = data.quotes || [];
         // while the CSS transition is happening.
         setTimeout(() => {
           isAnimating = false;
-        }, FADE_DURATION); 
+        }, FADE_DURATION);
       }
 
-      // Event Listeners
-      carousel.addEventListener('mouseenter', stopAutoPlay);
-      carousel.addEventListener('mouseleave', startAutoPlay);
+      // Event Listeners (UPDATED TO TRACK HOVER STATE)
+      carousel.addEventListener('mouseenter', () => {
+        isHovered = true;
+        stopAutoPlay();
+      });
+      
+      carousel.addEventListener('mouseleave', () => {
+        isHovered = false;
+        startAutoPlay();
+      });
 
       leftBtn?.addEventListener('click', () => {
         if (canInteract()) showSlide(currentIndex + 1);
       });
-      
+
       rightBtn?.addEventListener('click', () => {
         if (canInteract()) showSlide(currentIndex - 1);
       });
-      
+
       dots.forEach((dot, idx) => {
         dot.addEventListener('click', () => {
           if (canInteract()) showSlide(idx);
@@ -311,7 +321,7 @@ const quotes = data.quotes || [];
       // Mobile Swipe
       let touchStartX = 0;
       let touchStartY = 0;
-      
+
       carousel.addEventListener('touchstart', e => {
         touchStartX = e.touches[0].screenX;
         touchStartY = e.touches[0].screenY;
@@ -325,7 +335,7 @@ const quotes = data.quotes || [];
         if (Math.abs(deltaX) > Math.abs(deltaY)) {
           e.preventDefault(); 
         }
-      }, { passive: false }); 
+      }, { passive: false });
 
       carousel.addEventListener('touchend', e => {
         const deltaX = e.changedTouches[0].screenX - touchStartX;
@@ -340,7 +350,11 @@ const quotes = data.quotes || [];
         }
         touchStartX = 0;
         touchStartY = 0;
-        startAutoPlay(); 
+        
+        // Ensure autoplay only restarts if not hovering (relevant for hybrid devices)
+        if (!isHovered) {
+          startAutoPlay(); 
+        }
       }, { passive: true });
 
       // Trackpad Swipe
@@ -354,7 +368,7 @@ const quotes = data.quotes || [];
             }
           }
         }
-      }, { passive: false }); 
+      }, { passive: false });
 
       // Start the autoplay loop
       startAutoPlay();
